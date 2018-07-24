@@ -10,10 +10,10 @@ func (r *result) assertReturnCode(exprct int) bool {
 	return r.returnCode == exprct
 }
 
-func (r *result) assertStdout(t testCase) bool {
-	return t.assert(r.stdout)
+func (r *result) assertStdout(c assertCase) bool {
+	return c.assert(r.stdout)
 }
 
-func (r *result) assertStderr(t testCase) bool {
-	return t.assert(r.stderr)
+func (r *result) assertStderr(c assertCase) bool {
+	return c.assert(r.stderr)
 }

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type testCase interface {
+type assertCase interface {
 	assert(input string) bool
 }
 
