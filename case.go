@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -29,6 +30,15 @@ func (c *containCase) assert(input string) bool {
 	return ok
 }
 
+func (c *containCase) describe() string {
+	if c.isNot {
+		msg := fmt.Sprintf("should not contain %s\n", c.substr)
+		return msg
+	}
+	msg := fmt.Sprintf("should contain %s\n", c.substr)
+	return msg
+}
+
 type regexCase struct {
 	pattern *regexp.Regexp
 	isNot   bool
@@ -52,4 +62,13 @@ func (c *regexCase) assert(input string) bool {
 		return !ok
 	}
 	return ok
+}
+
+func (c *regexCase) describe() string {
+	if c.isNot {
+		msg := fmt.Sprintf("should not match %s\n", c.pattern)
+		return msg
+	}
+	msg := fmt.Sprintf("should match %s\n", c.pattern)
+	return msg
 }
