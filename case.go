@@ -8,6 +8,7 @@ import (
 
 type assertCase interface {
 	assert(input string) bool
+	describe() string
 }
 
 type containCase struct {
