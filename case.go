@@ -13,63 +13,66 @@ type assertCase interface {
 
 type containCase struct {
 	substr string
-	isNot  bool
 }
 
-func newContainCase(substr string, isNot bool) *containCase {
-	return &containCase{
-		substr: substr,
-		isNot:  isNot,
-	}
+func newContainCase(substr string) assertCase {
+	return &containCase{substr: substr}
 }
 
 func (c *containCase) assert(input string) bool {
-	ok := strings.Contains(input, c.substr)
-	if c.isNot {
-		return !ok
-	}
-	return ok
+	return strings.Contains(input, c.substr)
 }
 
 func (c *containCase) describe() string {
-	if c.isNot {
-		msg := fmt.Sprintf("should not contain %s\n", c.substr)
-		return msg
-	}
-	msg := fmt.Sprintf("should contain %s\n", c.substr)
-	return msg
+	return fmt.Sprintf("should contain %s\n", c.substr)
+}
+
+type notContainCase struct {
+	substr string
+}
+
+func newNotContainCase(substr string) assertCase {
+	return &notContainCase{substr: substr}
+}
+
+func (c *notContainCase) assert(input string) bool {
+	return !strings.Contains(input, c.substr)
+}
+
+func (c *notContainCase) describe() string {
+	return fmt.Sprintf("should not contain %s\n", c.substr)
 }
 
 type regexCase struct {
 	pattern *regexp.Regexp
-	isNot   bool
 }
 
-func newRegexCase(pattern string, isNot bool) (*regexCase, error) {
-	r, err := regexp.Compile(pattern)
-	if err != nil {
-		return nil, err
-	}
-
-	return &regexCase{
-		pattern: r,
-		isNot:   isNot,
-	}, nil
+func newRegexCase(pattern string) assertCase {
+	r := regexp.MustCompile(pattern)
+	return &regexCase{r}
 }
 
 func (c *regexCase) assert(input string) bool {
-	ok := c.pattern.MatchString(input)
-	if c.isNot {
-		return !ok
-	}
-	return ok
+	return c.pattern.MatchString(input)
 }
 
 func (c *regexCase) describe() string {
-	if c.isNot {
-		msg := fmt.Sprintf("should not match %s\n", c.pattern)
-		return msg
-	}
-	msg := fmt.Sprintf("should match %s\n", c.pattern)
-	return msg
+	return fmt.Sprintf("should match %s\n", c.pattern)
+}
+
+type notRegexCase struct {
+	pattern *regexp.Regexp
+}
+
+func newNotRegexCase(pattern string) assertCase {
+	r := regexp.MustCompile(pattern)
+	return &notRegexCase{r}
+}
+
+func (c *notRegexCase) assert(input string) bool {
+	return !c.pattern.MatchString(input)
+}
+
+func (c *notRegexCase) describe() string {
+	return fmt.Sprintf("should not match %s\n", c.pattern)
 }
