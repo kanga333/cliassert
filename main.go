@@ -41,9 +41,9 @@ func main() {
 	appendStdoutCase(assertion, &notStdoutRegex)
 
 	appendStderrCase(assertion, &stderr)
-	appendStderrCase(assertion, &stdoutRegex)
-	appendStderrCase(assertion, &notStdout)
-	appendStderrCase(assertion, &notStdoutRegex)
+	appendStderrCase(assertion, &stderrRegex)
+	appendStderrCase(assertion, &notStderr)
+	appendStderrCase(assertion, &notStderrRegex)
 
 	cmd := Command(args[0], args[1:]...)
 	result := cmd.exec()
