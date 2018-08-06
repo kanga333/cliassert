@@ -27,7 +27,7 @@ func (a *assertion) appendStderrCase(ac assertCase) {
 
 func (a *assertion) assertCliResult(r result) (bool, string) {
 	if !r.assertReturnCode(a.expectCode) {
-		return false, fmt.Sprintln("return code should be ", a.expectCode)
+		return false, fmt.Sprint("return code should be ", a.expectCode)
 	}
 
 	for _, c := range a.stdoutCases {
