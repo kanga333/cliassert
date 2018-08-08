@@ -32,13 +32,15 @@ func (a *assertion) assertCliResult(r result) (bool, string) {
 
 	for _, c := range a.stdoutCases {
 		if !r.assertStdout(c) {
-			return false, c.describe()
+			desctibe := fmt.Sprintf("Stdout %s", c.describe())
+			return false, desctibe
 		}
 	}
 
 	for _, c := range a.stderrCases {
 		if !r.assertStderr(c) {
-			return false, c.describe()
+			desctibe := fmt.Sprintf("Stderr %s", c.describe())
+			return false, desctibe
 		}
 	}
 	return true, ""
