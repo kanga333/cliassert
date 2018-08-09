@@ -50,6 +50,7 @@ func main() {
 
 	ok, testResult := assertion.assertCliResult(*result)
 	if !ok {
+		fmt.Printf(cmd.show())
 		fmt.Printf(result.show())
 		fmt.Printf("fail: %s.", testResult)
 		os.Exit(1)

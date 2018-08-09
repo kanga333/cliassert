@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
+	"strings"
 	"syscall"
 )
 
@@ -36,4 +38,8 @@ func (c *cmd) exec() *result {
 		stdout:     stdout.String(),
 		stderr:     stderr.String(),
 	}
+}
+
+func (c *cmd) show() string {
+	return fmt.Sprintln("Command:", strings.Join(c.cmd.Args, " "))
 }
