@@ -10,20 +10,29 @@ Simple command line assertion tool.
 cliassert [ -assertion-case value ] command
 ```
 
+## Examples
+
+You can test the result of command execution.
+
 ```console
-# You can check the result of command execution.
 % cliassert -stdout-contain ok echo case-is-ok
 % echo $?
 0
+```
 
-# If the test fails, details will be displayed on stderr.
+If the test fails, details will be displayed on stderr.
+
+```console
 % cliassert -stdout-contain ok echo case-is-ng
-[failure] stdout should contain ok. ()
+[failure] stdout should contain ok.
 % echo $?
 1
+```
 
-# Multiple tests can be set.
-# If the -v option is added, the details of the success case will also be displayed.
+Multiple tests can be set.
+If the `-v` option is added, the details of the success case will also be displayed.
+
+```console
 % cliassert -v -stdout-contain case -stdout-contain ok echo case-is-ng
 [exit-status] 0
 
