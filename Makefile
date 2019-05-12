@@ -1,11 +1,10 @@
 build:
-	go build .
+	go build ./cmd/cliassert
 
 clean:
 	rm -f cli-assert
 
-
 test:
-	go test .
+	go test
 
 .PHONY: build test

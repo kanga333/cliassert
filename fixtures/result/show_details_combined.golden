@@ -1,0 +1,15 @@
+[exit-status] 1
+
+[stdout]
+stdout
+
+[stderr]
+stderr
+
+---
+[success] ok1.
+[success] ok2.
+[failure] ng1.
+[failure] ng2.
+
+4 cases, 2 failures.

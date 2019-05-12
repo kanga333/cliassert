@@ -1,4 +1,4 @@
-package main
+package cliassert
 
 import (
 	"fmt"
@@ -6,73 +6,117 @@ import (
 	"strings"
 )
 
-type assertCase interface {
-	assert(input string) bool
-	describe() string
+// AssertCase represents one assertion case.
+// It can examine and describe the assertion.
+type AssertCase interface {
+	Assert(input string) bool
+	Describe() string
 }
 
-type containCase struct {
+// ContainCase represents one assertion case.
+// It checks if the input contains strings.
+type ContainCase struct {
 	substr string
 }
 
-func newContainCase(substr string) assertCase {
-	return &containCase{substr: substr}
+// NewContainCase creates a case to inspect a given string.
+func NewContainCase(substr string) AssertCase {
+	return &ContainCase{substr: substr}
 }
 
-func (c *containCase) assert(input string) bool {
+// Assert inspects case assertion.
+func (c *ContainCase) Assert(input string) bool {
 	return strings.Contains(input, c.substr)
 }
 
-func (c *containCase) describe() string {
-	return fmt.Sprintf("should contain %s\n", c.substr)
+// Describe Describes the case.
+func (c *ContainCase) Describe() string {
+	return fmt.Sprintf("should contain %s", c.substr)
 }
 
-type notContainCase struct {
+// NotContainCase represents one assertion case.
+// It checks that the input does not contain strings.
+type NotContainCase struct {
 	substr string
 }
 
-func newNotContainCase(substr string) assertCase {
-	return &notContainCase{substr: substr}
+// NewNotContainCase creates a case to inspect a given string.
+func NewNotContainCase(substr string) AssertCase {
+	return &NotContainCase{substr: substr}
 }
 
-func (c *notContainCase) assert(input string) bool {
+// Assert inspects case assertion.
+func (c *NotContainCase) Assert(input string) bool {
 	return !strings.Contains(input, c.substr)
 }
 
-func (c *notContainCase) describe() string {
-	return fmt.Sprintf("should not contain %s\n", c.substr)
+// Describe Describes the case.
+func (c *NotContainCase) Describe() string {
+	return fmt.Sprintf("should not contain %s", c.substr)
 }
 
-type regexCase struct {
+// RegexCase represents one assertion case.
+// It checks if the input match regex pattern.
+type RegexCase struct {
 	pattern *regexp.Regexp
 }
 
-func newRegexCase(pattern string) assertCase {
+// NewRegexCase creates a case to inspect a given string.
+func NewRegexCase(pattern string) AssertCase {
 	r := regexp.MustCompile(pattern)
-	return &regexCase{r}
+	return &RegexCase{r}
 }
 
-func (c *regexCase) assert(input string) bool {
+// Assert inspects case assertion.
+func (c *RegexCase) Assert(input string) bool {
 	return c.pattern.MatchString(input)
 }
 
-func (c *regexCase) describe() string {
-	return fmt.Sprintf("should match %s\n", c.pattern)
+// Describe Describes the case.
+func (c *RegexCase) Describe() string {
+	return fmt.Sprintf("should match %s", c.pattern)
 }
 
-type notRegexCase struct {
+// NotRegexCase represents one assertion case.
+// It checks that the input does not match regex pattern.
+type NotRegexCase struct {
 	pattern *regexp.Regexp
 }
 
-func newNotRegexCase(pattern string) assertCase {
+// NewNotRegexCase creates a case to inspect a given string.
+func NewNotRegexCase(pattern string) AssertCase {
 	r := regexp.MustCompile(pattern)
-	return &notRegexCase{r}
+	return &NotRegexCase{r}
 }
 
-func (c *notRegexCase) assert(input string) bool {
+// Assert inspects case assertion.
+func (c *NotRegexCase) Assert(input string) bool {
 	return !c.pattern.MatchString(input)
 }
 
-func (c *notRegexCase) describe() string {
-	return fmt.Sprintf("should not match %s\n", c.pattern)
+// Describe Describes the case.
+func (c *NotRegexCase) Describe() string {
+	return fmt.Sprintf("should not match %s", c.pattern)
+}
+
+// EqualCase represents one assertion case.
+// It checks that the input and the string are the same.
+type EqualCase struct {
+	want string
+}
+
+// NewEqualCase creates a case to inspect a given string.
+func NewEqualCase(want string) AssertCase {
+	return &EqualCase{want}
+}
+
+// Assert inspects case assertion.
+func (c *EqualCase) Assert(input string) bool {
+	c.Describe()
+	return c.want == input
+}
+
+// Describe Describes the case.
+func (c *EqualCase) Describe() string {
+	return fmt.Sprintf("should be equal %s", c.want)
 }

@@ -1,0 +1,20 @@
+[exit-status] 0
+
+[stdout]
+stdout
+
+[stderr]
+stderr
+
+---
+[success] exit-status should be equal 0.
+[success] stdout should contain stdout.
+[success] stdout should match .*.
+[success] stdout should not contain ng.
+[success] stdout should not match ng.
+[success] stderr should contain stderr.
+[success] stderr should match .*.
+[success] stderr should not contain ng.
+[success] stderr should not match ng.
+
+9 cases, 0 failures.

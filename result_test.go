@@ -1,49 +1,88 @@
-package main
+package cliassert
 
 import (
+	"io/ioutil"
+	"path/filepath"
 	"testing"
 )
 
-func TestResult(t *testing.T) {
-	cases := [][]struct {
-		subString string
-		input     string
-		want      bool
+func TestResult_Show(t *testing.T) {
+	cases := []struct {
+		Name   string
+		Result Result
 	}{
-		{
-			{subString: "stdout", want: true},
-			{subString: "stderr", want: false},
-		},
-		{
-			{subString: "stdout", want: false},
-			{subString: "stderr", want: true},
-		},
+		{"zero", Result{}},
+		{"successes", Result{
+			successes: []string{"ok1", "ok2"},
+		}},
+		{"failures", Result{
+			failures: []string{"ng1", "ng2"},
+		}},
+		{"combined", Result{
+			failures:  []string{"ng1", "ng2"},
+			successes: []string{"ok1", "ok2"},
+		}},
 	}
-
-	r := &result{
-		returnCode: 0,
-		stdout:     "stdout",
-		stderr:     "stderr",
+	for _, c := range cases {
+		t.Run(c.Name, func(t *testing.T) {
+			got, err := c.Result.Show()
+			if err != nil {
+				t.Fatalf("Show return error: %v", err)
+			}
+			golden := filepath.Join("fixtures/result", "show_"+c.Name+".golden")
+			if *update {
+				ioutil.WriteFile(golden, []byte(got), 0644)
+			}
+			data, _ := ioutil.ReadFile(golden)
+			want := string(data)
+			if got != want {
+				t.Errorf("Show \ngot:\n%v,want:\n%v", got, want)
+			}
+		})
 	}
+}
 
-	got := r.assertReturnCode(0)
-	if got != true {
-		t.Errorf("assertReturnCode  got: %v, want: %v:", got, true)
+func TestResult_ShowDetails(t *testing.T) {
+	cases := []struct {
+		Name   string
+		Result Result
+	}{
+		{"zero", Result{}},
+		{"successes", Result{
+			exitStatus: "1",
+			stdout:     "stdout\n",
+			stderr:     "stderr\n",
+			successes:  []string{"ok1", "ok2"},
+		}},
+		{"failures", Result{
+			exitStatus: "1",
+			stdout:     "stdout\n",
+			stderr:     "stderr\n",
+			failures:   []string{"ng1", "ng2"},
+		}},
+		{"combined", Result{
+			exitStatus: "1",
+			stdout:     "stdout\n",
+			stderr:     "stderr\n",
+			failures:   []string{"ng1", "ng2"},
+			successes:  []string{"ok1", "ok2"},
+		}},
 	}
-
-	for _, c := range cases[0] {
-		cc := newContainCase(c.subString)
-		got := r.assertStdout(cc)
-		if got != c.want {
-			t.Errorf("Assert %s %s got: %v, want: %v:", r.stdout, cc.describe(), got, c.want)
-		}
-	}
-
-	for _, c := range cases[1] {
-		cc := newContainCase(c.subString)
-		got := r.assertStderr(cc)
-		if got != c.want {
-			t.Errorf("Assert %s %s got: %v, want: %v:", r.stderr, cc.describe(), got, c.want)
-		}
+	for _, c := range cases {
+		t.Run(c.Name, func(t *testing.T) {
+			got, err := c.Result.ShowDetails()
+			if err != nil {
+				t.Fatalf("Show return error: %v", err)
+			}
+			golden := filepath.Join("fixtures/result", "show_details_"+c.Name+".golden")
+			if *update {
+				ioutil.WriteFile(golden, []byte(got), 0644)
+			}
+			data, _ := ioutil.ReadFile(golden)
+			want := string(data)
+			if got != want {
+				t.Errorf("Show \ngot:\n%v,want:\n%v", got, want)
+			}
+		})
 	}
 }

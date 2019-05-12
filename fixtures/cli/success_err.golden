@@ -1,0 +1,11 @@
+[exit-status] 0
+
+[stdout]
+stdout
+
+[stderr]
+
+---
+[success] exit-status should be equal 0.
+
+1 cases, 0 failures.

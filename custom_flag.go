@@ -1,4 +1,4 @@
-package main
+package cliassert
 
 import "fmt"
 
@@ -14,43 +14,51 @@ func (s *stringSlice) Set(v string) error {
 }
 
 type assertCaseFlag interface {
-	generate() []assertCase
+	Build() []AssertCase
 }
 
 type containFlag struct {
 	stringSlice
 }
 
-func (f *containFlag) generate() []assertCase {
-	return generateAssertCase(f.stringSlice, newContainCase)
+func (f *containFlag) Build() []AssertCase {
+	return buildAssertCase(f.stringSlice, NewContainCase)
 }
 
 type notContainFlag struct {
 	stringSlice
 }
 
-func (f *notContainFlag) generate() []assertCase {
-	return generateAssertCase(f.stringSlice, newNotContainCase)
+func (f *notContainFlag) Build() []AssertCase {
+	return buildAssertCase(f.stringSlice, NewNotContainCase)
 }
 
 type regexFlag struct {
 	stringSlice
 }
 
-func (f *regexFlag) generate() []assertCase {
-	return generateAssertCase(f.stringSlice, newRegexCase)
+func (f *regexFlag) Build() []AssertCase {
+	return buildAssertCase(f.stringSlice, NewRegexCase)
 }
 
 type notRegexFlag struct {
 	stringSlice
 }
 
-func (f *notRegexFlag) generate() []assertCase {
-	return generateAssertCase(f.stringSlice, newNotRegexCase)
+func (f *notRegexFlag) Build() []AssertCase {
+	return buildAssertCase(f.stringSlice, NewNotRegexCase)
 }
 
-func generateAssertCase(ss stringSlice, f func(string) assertCase) []assertCase {
-	var cases []assertCase
+type equalCaseFlag struct {
+	stringSlice
+}
+
+func (f *equalCaseFlag) Build() []AssertCase {
+	return buildAssertCase(f.stringSlice, NewEqualCase)
+}
+
+func buildAssertCase(ss stringSlice, f func(string) AssertCase) []AssertCase {
+	var cases []AssertCase
 	for _, s := range ss {
 		c := f(s)
 		cases = append(cases, c)

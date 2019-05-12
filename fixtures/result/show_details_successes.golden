@@ -1,0 +1,13 @@
+[exit-status] 1
+
+[stdout]
+stdout
+
+[stderr]
+stderr
+
+---
+[success] ok1.
+[success] ok2.
+
+2 cases, 0 failures.

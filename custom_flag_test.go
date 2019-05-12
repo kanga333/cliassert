@@ -1,105 +1,28 @@
-package main
+package cliassert
 
 import (
+	"reflect"
 	"testing"
 )
 
-func TestContainFlag(t *testing.T) {
+func TestAssertCaseFlag(t *testing.T) {
 	cases := []struct {
-		subString string
-		input     string
-		want      bool
+		Name string
+		Flag assertCaseFlag
+		Want AssertCase
 	}{
-		{subString: "t", input: "test", want: true},
-		{subString: "n", input: "test", want: false},
+		{"containFlag", &containFlag{stringSlice{"1"}}, &ContainCase{}},
+		{"notContainFlag", &notContainFlag{stringSlice{"1"}}, &NotContainCase{}},
+		{"regexFlag", &regexFlag{stringSlice{"1"}}, &RegexCase{}},
+		{"notRegexFlag", &notRegexFlag{stringSlice{"1"}}, &NotRegexCase{}},
+		{"equalCaseFlag", &equalCaseFlag{stringSlice{"1"}}, &EqualCase{}},
 	}
-
-	var flag containFlag
 	for _, c := range cases {
-		flag.Set(c.subString)
-	}
-
-	assertCases := flag.generate()
-
-	for i, ac := range assertCases {
-		got := ac.assert(cases[i].input)
-		if got != cases[i].want {
-			t.Errorf("Assert %s %s got: %v, want: %v:", cases[i].input, ac.describe(), got, cases[i].want)
-		}
-	}
-}
-
-func TestNotContainFlag(t *testing.T) {
-	cases := []struct {
-		subString string
-		input     string
-		want      bool
-	}{
-		{subString: "t", input: "test", want: false},
-		{subString: "n", input: "test", want: true},
-	}
-
-	var flag notContainFlag
-	for _, c := range cases {
-		flag.Set(c.subString)
-	}
-
-	assertCases := flag.generate()
-
-	for i, ac := range assertCases {
-		got := ac.assert(cases[i].input)
-		if got != cases[i].want {
-			t.Errorf("Assert %s %s got: %v, want: %v:", cases[i].input, ac.describe(), got, cases[i].want)
-		}
-	}
-}
-
-func TestRegexFlag(t *testing.T) {
-	cases := []struct {
-		subString string
-		input     string
-		want      bool
-	}{
-		{subString: "te.t", input: "test", want: true},
-		{subString: "te..t", input: "test", want: false},
-	}
-
-	var flag regexFlag
-	for _, c := range cases {
-		flag.Set(c.subString)
-	}
-
-	assertCases := flag.generate()
-
-	for i, ac := range assertCases {
-		got := ac.assert(cases[i].input)
-		if got != cases[i].want {
-			t.Errorf("Assert %s %s got: %v, want: %v:", cases[i].input, ac.describe(), got, cases[i].want)
-		}
-	}
-}
-
-func TestNotRegexFlag(t *testing.T) {
-	cases := []struct {
-		subString string
-		input     string
-		want      bool
-	}{
-		{subString: "te.t", input: "test", want: false},
-		{subString: "te..t", input: "test", want: true},
-	}
-
-	var flag notRegexFlag
-	for _, c := range cases {
-		flag.Set(c.subString)
-	}
-
-	assertCases := flag.generate()
-
-	for i, ac := range assertCases {
-		got := ac.assert(cases[i].input)
-		if got != cases[i].want {
-			t.Errorf("Assert %s %s got: %v, want: %v:", cases[i].input, ac.describe(), got, cases[i].want)
-		}
+		t.Run(c.Name, func(t *testing.T) {
+			got := c.Flag.Build()
+			if reflect.TypeOf(got[0]) != reflect.TypeOf(c.Want) {
+				t.Errorf("Build type got: %v, want: %v", reflect.TypeOf(got[0]), reflect.TypeOf(c.Want))
+			}
+		})
 	}
 }
