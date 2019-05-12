@@ -9,6 +9,7 @@ import (
 
 var (
 	verbose        *bool
+	pass           *bool
 	exitStatus     equalCaseFlag
 	stdout         containFlag
 	stderr         containFlag
@@ -28,7 +29,8 @@ const (
 
 func flagParse(args []string) ([]string, error) {
 	f := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	verbose = f.Bool("v", false, "show verbose")
+	verbose = f.Bool("v", false, "Show verbose")
+	pass = f.Bool("pass", false, "Pass stdout")
 	f.Var(&exitStatus, "exit-status", "String equal to exit-status")
 	f.Var(&stdout, "stdout-contain", "String contained in stdout")
 	f.Var(&stderr, "stderr-contain", "String contained in stderr")
@@ -85,6 +87,10 @@ func (c *CLI) Run(args []string) int {
 		return exitStatusError
 	}
 	fmt.Fprint(c.ErrStream, output)
+
+	if *pass {
+		fmt.Fprint(c.OutStream, result.Stdout())
+	}
 
 	if !ok {
 		return exitStatusAssertFailure

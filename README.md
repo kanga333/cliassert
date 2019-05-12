@@ -48,11 +48,20 @@ case-is-ng
 2 cases, 1 failures.
 ```
 
+You can pass the standard output of a command to standard output using the `pass` option.
+
+```console
+% cliassert -pass -exit-status 0 echo pass
+pass
+```
+
 ## Options
 
 ```text
 -exit-status value
       String equal to exit-status
+-pass
+      Pass stdout of command to stdout
 -stderr-contain value
       String contained in stderr
 -stderr-match value
@@ -69,5 +78,5 @@ case-is-ng
       String not contained in stdout
 -stdout-not-match value
       Regex not matching stdout
--v    show verbose
+-v    Show verbose
 ```

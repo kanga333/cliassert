@@ -29,6 +29,7 @@ func TestResult_CLI(t *testing.T) {
 			"all_pass",
 			[]string{
 				"-v",
+				"-pass",
 				"-exit-status", "0",
 				"-stdout-contain", "stdout",
 				"-stderr-contain", "stderr",

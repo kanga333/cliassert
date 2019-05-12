@@ -93,6 +93,11 @@ func (r *Result) ShowDetails() (string, error) {
 	return buf.String(), nil
 }
 
+// Stdout returns the stdout of the result.
+func (r *Result) Stdout() string {
+	return r.stdout
+}
+
 func (r *Result) countCases() int {
 	return len(r.successes) + len(r.failures)
 }

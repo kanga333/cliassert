@@ -86,3 +86,21 @@ func TestResult_ShowDetails(t *testing.T) {
 		})
 	}
 }
+
+func TestResult_Stdout(t *testing.T) {
+	cases := []struct {
+		Name string
+		Want string
+	}{
+		{"ok", "ok"},
+	}
+	for _, c := range cases {
+		t.Run(c.Name, func(t *testing.T) {
+			r := Result{stdout: c.Want}
+			got := r.Stdout()
+			if got != c.Want {
+				t.Errorf("Stdout got:%v, want:%v", got, c.Want)
+			}
+		})
+	}
+}
