@@ -55,6 +55,13 @@ You can pass the standard output of a command to standard output using the `pass
 pass
 ```
 
+You can also use pipe.
+
+```console
+% echo pipe | cliassert -stdout-contain pipe
+pass
+```
+
 ## Options
 
 ```text
