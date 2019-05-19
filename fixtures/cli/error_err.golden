@@ -1,1 +1,1 @@
-Command execution error: exec: "nonexistent_command": executable file not found in $PATH
+Fail to build assertion case: exec: "nonexistent_command": executable file not found in $PATH

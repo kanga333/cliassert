@@ -1,0 +1,10 @@
+[exit-status] 
+
+[stdout]
+stdin
+[stderr]
+
+---
+[success] stdout should contain stdin.
+
+1 cases, 0 failures.

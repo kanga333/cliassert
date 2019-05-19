@@ -1,9 +1,11 @@
 package cliassert
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -49,6 +51,7 @@ func flagParse(args []string) ([]string, error) {
 
 // CLI is the struct that handles cli application.
 type CLI struct {
+	InStream             *os.File
 	OutStream, ErrStream io.Writer
 }
 
@@ -60,23 +63,9 @@ func (c *CLI) Run(args []string) int {
 		return exitStatusError
 	}
 
-	builder := AssertionBuilder{}
-
-	builder.AppendExitStatusCases(exitStatus.Build())
-
-	builder.AppendStdoutCases(stdout.Build())
-	builder.AppendStdoutCases(stdoutRegex.Build())
-	builder.AppendStdoutCases(notStdout.Build())
-	builder.AppendStdoutCases(notStdoutRegex.Build())
-
-	builder.AppendStderrCases(stderr.Build())
-	builder.AppendStderrCases(stderrRegex.Build())
-	builder.AppendStderrCases(notStderr.Build())
-	builder.AppendStderrCases(notStderrRegex.Build())
-
-	assertion, err := builder.BuildWithCommand(parsedArgs[0], parsedArgs[1:]...)
+	assertion, err := c.buildAssertion(parsedArgs)
 	if err != nil {
-		fmt.Fprintf(c.ErrStream, "Command execution error: %v\n", err)
+		fmt.Fprintf(c.ErrStream, "Fail to build assertion case: %v\n", err)
 		return exitStatusError
 	}
 
@@ -96,6 +85,43 @@ func (c *CLI) Run(args []string) int {
 		return exitStatusAssertFailure
 	}
 	return exitStatusOK
+}
+
+func (c *CLI) buildAssertion(args []string) (*Assertion, error) {
+	builder := AssertionBuilder{}
+
+	builder.AppendExitStatusCases(exitStatus.Build())
+
+	builder.AppendStdoutCases(stdout.Build())
+	builder.AppendStdoutCases(stdoutRegex.Build())
+	builder.AppendStdoutCases(notStdout.Build())
+	builder.AppendStdoutCases(notStdoutRegex.Build())
+
+	builder.AppendStderrCases(stderr.Build())
+	builder.AppendStderrCases(stderrRegex.Build())
+	builder.AppendStderrCases(notStderr.Build())
+	builder.AppendStderrCases(notStderrRegex.Build())
+
+	if c.stdinPiped() {
+		if len(args) != 0 {
+			return nil, errors.New("pipe and command can not be used simultaneously")
+		}
+
+		stdin, err := ioutil.ReadAll(c.InStream)
+		if err != nil {
+			return nil, err
+		}
+		return builder.BuildWithStdin(string(stdin))
+	}
+	return builder.BuildWithCommand(args)
+}
+
+func (c *CLI) stdinPiped() bool {
+	fi, err := c.InStream.Stat()
+	if err != nil {
+		return false
+	}
+	return fi.Mode()&os.ModeNamedPipe != 0
 }
 
 func renderResult(verbose bool, result *Result) (string, error) {

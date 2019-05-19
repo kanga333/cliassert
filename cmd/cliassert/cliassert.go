@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	os.Exit((&cliassert.CLI{ErrStream: os.Stderr, OutStream: os.Stdout}).Run(os.Args[1:]))
+	os.Exit((&cliassert.CLI{ErrStream: os.Stderr, OutStream: os.Stdout, InStream: os.Stdin}).Run(os.Args[1:]))
 }

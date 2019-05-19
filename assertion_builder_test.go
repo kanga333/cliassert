@@ -71,7 +71,7 @@ func TestAssertionBuilder_BuildWithCommand(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.Name, func(t *testing.T) {
 			a := AssertionBuilder{}
-			got, err := a.BuildWithCommand(c.Cmd[0], c.Cmd[1:]...)
+			got, err := a.BuildWithCommand(c.Cmd)
 			if err != nil {
 				t.Fatalf("BuildWithCommand return error: %v", err)
 			}
@@ -79,6 +79,65 @@ func TestAssertionBuilder_BuildWithCommand(t *testing.T) {
 				t.Errorf("BuildWithCommand \ngot:\n%v,\nwant:\n%v:", got, c.Want)
 			}
 
+		})
+	}
+}
+
+func TestAssertionBuilder_BuildWithCommand_Error(t *testing.T) {
+	a := AssertionBuilder{}
+	got, err := a.BuildWithCommand([]string{})
+	if err == nil {
+		t.Fatalf("BuildWithCommand with empty arguments should return error but return: %v", got)
+	}
+}
+
+func TestAssertionBuilder_BuildWithStdin(t *testing.T) {
+	cases := []struct {
+		Name  string
+		Stdin string
+		Want  *Assertion
+	}{
+		{"ok", "stdin",
+			&Assertion{
+				stdoutCases: []AssertCase{&mockCase{}},
+				stdout:      "stdin",
+			},
+		},
+	}
+	for _, c := range cases {
+		t.Run(c.Name, func(t *testing.T) {
+			a := AssertionBuilder{}
+			a.AppendStdoutCases([]AssertCase{&mockCase{}})
+			got, err := a.BuildWithStdin(c.Stdin)
+			if err != nil {
+				t.Fatalf("BuildWithStdin return error: %v", err)
+			}
+			if !reflect.DeepEqual(got, c.Want) {
+				t.Errorf("BuildWithStdin \ngot:\n%v,\nwant:\n%v:", got, c.Want)
+			}
+
+		})
+	}
+}
+
+func TestAssertionBuilder_BuildWithStdin_Error(t *testing.T) {
+	cases := []struct {
+		Name    string
+		Builder AssertionBuilder
+	}{
+		{"stderr cases", AssertionBuilder{
+			stderrCases: []AssertCase{&mockCase{}},
+		}},
+		{"exit-status cases", AssertionBuilder{
+			exitStatusCases: []AssertCase{&mockCase{}},
+		}},
+	}
+	for _, c := range cases {
+		t.Run(c.Name, func(t *testing.T) {
+			got, err := c.Builder.BuildWithStdin("")
+			if err == nil {
+				t.Fatalf("BuildWithStdin with %s should return error but return: %v", c.Name, got)
+			}
 		})
 	}
 }

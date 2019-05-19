@@ -2,6 +2,7 @@ package cliassert
 
 import (
 	"bytes"
+	"errors"
 	"os/exec"
 	"strconv"
 	"syscall"
@@ -31,9 +32,13 @@ func (a *AssertionBuilder) AppendStderrCases(cases []AssertCase) {
 }
 
 // BuildWithCommand built assertion form command　result.
-func (a *AssertionBuilder) BuildWithCommand(name string, arg ...string) (*Assertion, error) {
+func (a *AssertionBuilder) BuildWithCommand(args []string) (*Assertion, error) {
+	if len(args) == 0 {
+		return nil, errors.New("missing argument for command")
+	}
+
 	var stdout, stderr bytes.Buffer
-	cmd := exec.Command(name, arg...)
+	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	exitStatus := 0
@@ -55,5 +60,16 @@ func (a *AssertionBuilder) BuildWithCommand(name string, arg ...string) (*Assert
 		exitStatus:      strconv.Itoa(exitStatus),
 		stdout:          stdout.String(),
 		stderr:          stderr.String(),
+	}, nil
+}
+
+// BuildWithStdin built assertion form stdin.
+func (a *AssertionBuilder) BuildWithStdin(stdin string) (*Assertion, error) {
+	if (len(a.exitStatusCases) != 0) || (len(a.stderrCases) != 0) {
+		return nil, errors.New("pipe can only be used for stdout testing")
+	}
+	return &Assertion{
+		stdoutCases: a.stdoutCases,
+		stdout:      stdin,
 	}, nil
 }
