@@ -59,7 +59,7 @@ type CLI struct {
 func (c *CLI) Run(args []string) int {
 	parsedArgs, err := flagParse(args)
 	if err != nil {
-		fmt.Fprintf(c.ErrStream, "Flag parse error: %v\n", err)
+		fmt.Fprintf(c.ErrStream, "Fail to parse flag: %v\n", err)
 		return exitStatusError
 	}
 
@@ -72,7 +72,7 @@ func (c *CLI) Run(args []string) int {
 	ok, result := assertion.Assert()
 	output, err := renderResult(*verbose, result)
 	if err != nil {
-		fmt.Fprintf(c.ErrStream, "Result rendering error: %v\n", err)
+		fmt.Fprintf(c.ErrStream, "Fail to render output: %v\n", err)
 		return exitStatusError
 	}
 	fmt.Fprint(c.ErrStream, output)
