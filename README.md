@@ -1,5 +1,9 @@
 # cliassert
 
+[![Build Status](https://travis-ci.org/kanga333/cliassert.svg?branch=master)](travis)
+[![Coverage Status](https://coveralls.io/repos/github/kanga333/cliassert/badge.svg?branch=master)](coverralls)
+[![LICENSE](https://img.shields.io/github/license/kanga333/cliassert.svg)](https://github.com/kanga333/cliassert/blob/master/LICENSE)
+
 ## Description
 
 Simple command line assertion tool.
