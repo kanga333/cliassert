@@ -1,0 +1,10 @@
+language: go
+go:
+- "1.12"
+before_install:
+  - go get github.com/mattn/goveralls
+script:
+- make lint
+- make test
+after_script:
+- make cover
