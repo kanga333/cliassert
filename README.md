@@ -59,7 +59,6 @@ You can also use pipe.
 
 ```console
 % echo pipe | cliassert -stdout-contain pipe
-pass
 ```
 
 ## Options
